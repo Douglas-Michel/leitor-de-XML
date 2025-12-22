@@ -1,73 +1,112 @@
-# Welcome to your Lovable project
+# Fiscal Flow
 
-## Project info
+**Aplicação web para extrair, visualizar e exportar dados de notas fiscais eletrônicas (NF-e) e conhecimentos de transporte (CT-e) a partir de arquivos XML.**
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+---
 
-## How can I edit this code?
+## ✨ Recursos
 
-There are several ways of editing your application.
+- Leitura e parse de arquivos `.xml` (NF-e e CT-e)
+- Extração de informações fiscais (valores, alíquotas, ICMS, PIS, COFINS, IPI, DIFAL, chave de acesso, etc.)
+- Visualização em tabela com busca e filtros
+- Resumo com cards de valores agregados
+- Exportação para Excel (.xlsx) com planilha de dados e planilha de resumo
+- Upload por arrastar/soltar ou seleção de arquivos
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## 🚀 Começando
 
-Changes made via Lovable will be committed automatically to this repo.
+### Pré-requisitos
 
-**Use your preferred IDE**
+- Node.js (recomendo v18+)
+- Gerenciador de pacotes: npm / pnpm / yarn / bun
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Instalação
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```bash
+# com npm
+npm install
 
-Follow these steps:
+# com pnpm
+pnpm install
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+# com bun
+bun install
 ```
 
-**Edit a file directly in GitHub**
+### Executando em desenvolvimento
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+# iniciar dev server
+npm run dev
+# ou
+pnpm dev
+# ou
+bun run dev
+```
 
-**Use GitHub Codespaces**
+Acesse http://localhost:5173 (ou a porta mostrada no terminal).
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Build e preview
 
-## What technologies are used for this project?
+```bash
+# build de produção
+npm run build
 
-This project is built with:
+# preview do build
+npm run preview
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Lint
 
-## How can I deploy this project?
+```bash
+npm run lint
+```
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## 📂 Estrutura principal
 
-Yes, you can!
+- `src/pages/Index.tsx` – página principal com upload, lista e exportação
+- `src/components/FileUploadZone.tsx` – zona de drag & drop e processamento de arquivos
+- `src/components/DataTable.tsx` – exibição de dados extraídos
+- `src/lib/xmlParser.ts` – lógica de parsing e normalização dos dados fiscais
+- `src/lib/excelExport.ts` – exportação para Excel (xlsx)
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+---
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 🧩 Como usar
+
+1. Abra a aplicação no navegador.
+2. Arraste e solte arquivos `.xml` (ou clique para selecionar).
+3. Aguarde o processamento — arquivos inválidos/maus formatados serão ignorados.
+4. Use a busca para filtrar por número, fornecedor, tipo ou data.
+5. Clique em **Exportar** para gerar um arquivo `.xlsx` com os dados e um resumo.
+6. Use **Limpar** para remover resultados carregados.
+
+> Observação: o parser tenta extrair campos padrões de NF-e e CT-e. Se um XML estiver em esquema não esperado, os dados podem não ser extraídos corretamente.
+
+---
+
+## 🛠️ Contribuindo
+
+1. Abra uma issue descrevendo o que deseja melhorar ou corrigir.
+2. Faça um fork, crie uma branch com sua feature/bugfix e abra um PR.
+3. Siga as regras de lint (`npm run lint`) e mantenha o código em TypeScript.
+
+---
+
+## 📝 Licença
+
+Nenhuma licença está definida no repositório. Se quiser permitir uso aberto, adicione um arquivo `LICENSE` (por exemplo, MIT).
+
+---
+
+## Contato
+
+Se precisar de ajuda, abra uma issue no repositório.
+
+---
+
+Feito com ❤️ — se quiser, posso ajustar o README (adicionar badges, exemplos de screenshots ou instruções de deploy).
