@@ -5,9 +5,10 @@ export function exportToExcel(notas: NotaFiscal[], fileName: string = 'notas_fis
   const data = notas.map((nota) => ({
     'Data': nota.dataEmissao,
     'Tipo NF': nota.tipo,
+    'Operação': nota.tipoOperacao,
     'Fornecedor/Cliente': nota.fornecedorCliente,
     'Nº NF-e': nota.tipo === 'NF-e' ? nota.numero : '',
-    'Nº CT-e': nota.numeroCTe || '',
+    'Nº CT-e': nota.numeroCTe || nota.nfeReferenciada || '',
     'Valor': nota.valorTotal,
     'Alíq. PIS': nota.aliquotaPIS,
     'PIS': nota.valorPIS,
@@ -30,6 +31,7 @@ export function exportToExcel(notas: NotaFiscal[], fileName: string = 'notas_fis
   const columnWidths = [
     { wch: 12 },  // Data
     { wch: 8 },   // Tipo NF
+    { wch: 10 },  // Operação
     { wch: 40 },  // Fornecedor/Cliente
     { wch: 12 },  // Nº NF-e
     { wch: 12 },  // Nº CT-e

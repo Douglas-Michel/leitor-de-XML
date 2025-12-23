@@ -1,4 +1,6 @@
 import { motion } from 'framer-motion';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { NotaFiscal, formatCurrency, formatPercent } from '@/lib/xmlParser';
 import {
   Table,
@@ -32,7 +34,6 @@ export function DataTable({ data }: DataTableProps) {
               <TableRow className="bg-muted/50 hover:bg-muted/50">
                 <TableHead className="font-semibold text-foreground whitespace-nowrap text-center">Data</TableHead>
                 <TableHead className="font-semibold text-foreground whitespace-nowrap text-center">Tipo NF</TableHead>
-                <TableHead className="font-semibold text-foreground whitespace-nowrap text-center">Operação</TableHead>
                 <TableHead className="font-semibold text-foreground whitespace-nowrap">Fornecedor/Cliente</TableHead>
                 <TableHead className="font-semibold text-foreground whitespace-nowrap text-center">Nº NF-e</TableHead>
                 <TableHead className="font-semibold text-foreground whitespace-nowrap text-center">Nº CT-e</TableHead>
@@ -61,15 +62,7 @@ export function DataTable({ data }: DataTableProps) {
                   className="group hover:bg-muted/30 transition-colors"
                 >
                   <TableCell className="text-sm text-muted-foreground text-center whitespace-nowrap">
-                    {nota.dataEmissao}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <Badge 
-                      variant={nota.tipo === 'NF-e' ? 'default' : 'secondary'}
-                      className="font-mono text-xs whitespace-nowrap"
-                    >
-                      {nota.tipo}
-                    </Badge>
+                    {format(new Date(), "dd/MMM", { locale: ptBR })}
                   </TableCell>
                   <TableCell className="text-center">
                     <Badge 
@@ -86,7 +79,7 @@ export function DataTable({ data }: DataTableProps) {
                     {nota.tipo === 'NF-e' ? nota.numero : '-'}
                   </TableCell>
                   <TableCell className="font-mono text-sm text-center">
-                    {nota.numeroCTe || '-'}
+                    {nota.numeroCTe || nota.nfeReferenciada || '-'}
                   </TableCell>
                   <TableCell className="text-right font-medium tabular-nums whitespace-nowrap">
                     {formatCurrency(nota.valorTotal)}

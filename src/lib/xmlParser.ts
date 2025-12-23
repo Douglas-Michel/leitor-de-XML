@@ -29,6 +29,10 @@ export interface NotaFiscal {
   ano: string;
   reducaoICMS: number;
   chaveAcesso: string;
+  // Documentos referenciados
+  nfeReferenciada: string;
+  cteReferenciado: string;
+  chaveReferenciada: string;
 }
 
 function getTextContent(element: Element | null, tagName: string): string {
@@ -53,20 +57,62 @@ export function parseNFeXML(xmlContent: string, fileName: string): NotaFiscal | 
       return null;
     }
 
-    const nfe = xmlDoc.getElementsByTagName('NFe')[0] || xmlDoc.getElementsByTagName('nfeProc')[0];
-    const cte = xmlDoc.getElementsByTagName('CTe')[0] || xmlDoc.getElementsByTagName('cteProc')[0];
+    // Try multiple ways to find NF-e document (handles namespaces and variations)
+    const nfeProc = xmlDoc.getElementsByTagName('nfeProc')[0];
+    const nfe = xmlDoc.getElementsByTagName('NFe')[0] 
+      || nfeProc?.getElementsByTagName('NFe')[0]
+      || xmlDoc.querySelector('NFe')
+      || xmlDoc.querySelector('[*|NFe]');
+    
+    // Try multiple ways to find CT-e document
+    const cteProc = xmlDoc.getElementsByTagName('cteProc')[0];
+    const cte = xmlDoc.getElementsByTagName('CTe')[0] 
+      || cteProc?.getElementsByTagName('CTe')[0]
+      || xmlDoc.querySelector('CTe')
+      || xmlDoc.querySelector('[*|CTe]');
 
-    if (nfe) {
-      return parseNFe(nfe, fileName);
-    } else if (cte) {
-      return parseCTe(cte, fileName);
+    // Check for event XMLs (procEventoNFe, procEventoCTe) - skip them as they are not invoices
+    const isEventXML = xmlDoc.getElementsByTagName('procEventoNFe')[0] 
+      || xmlDoc.getElementsByTagName('procEventoCTe')[0]
+      || xmlDoc.getElementsByTagName('eventoCTe')[0]
+      || xmlDoc.getElementsByTagName('eventoNFe')[0];
+    
+    if (isEventXML) {
+      console.log(`Skipping event XML: ${fileName}`);
+      return null;
     }
 
+    // Check for canceled documents
+    const retCancNFe = xmlDoc.getElementsByTagName('retCancNFe')[0];
+    const retCancCTe = xmlDoc.getElementsByTagName('retCancCTe')[0];
+    if (retCancNFe || retCancCTe) {
+      console.log(`Skipping cancellation XML: ${fileName}`);
+      return null;
+    }
+
+    // Try to find the infNFe or infCte directly if wrappers are not found
+    const infNFe = xmlDoc.getElementsByTagName('infNFe')[0];
+    const infCte = xmlDoc.getElementsByTagName('infCte')[0];
+
+    if (nfe || infNFe) {
+      return parseNFe(nfe || infNFe.parentElement || xmlDoc.documentElement, fileName);
+    } else if (cte || infCte) {
+      return parseCTe(cte || infCte.parentElement || xmlDoc.documentElement, fileName);
+    }
+
+    console.warn(`Unknown XML format in file: ${fileName}`);
     return null;
   } catch (error) {
     console.error('Error parsing XML:', error);
     return null;
   }
+}
+
+// Extrai o número do documento de uma chave de acesso de 44 dígitos
+// Posição 26-34: número do documento (9 dígitos)
+function extrairNumeroDaChave(chave: string): string {
+  if (!chave || chave.length !== 44) return '';
+  return chave.substring(25, 34).replace(/^0+/, ''); // Remove zeros à esquerda
 }
 
 function parseNFe(doc: Element, fileName: string): NotaFiscal {
@@ -116,6 +162,31 @@ function parseNFe(doc: Element, fileName: string): NotaFiscal {
   const dataStr = getTextContent(ide, 'dhEmi') || getTextContent(ide, 'dEmi');
   const ano = dataStr ? dataStr.substring(0, 4) : '';
 
+  // Buscar documentos referenciados (NFref)
+  let nfeReferenciada = '';
+  let cteReferenciado = '';
+  let chaveReferenciada = '';
+  
+  const nfRefs = ide?.getElementsByTagName('NFref');
+  if (nfRefs && nfRefs.length > 0) {
+    for (let i = 0; i < nfRefs.length; i++) {
+      const nfRef = nfRefs[i];
+      const refNFe = getTextContent(nfRef, 'refNFe');
+      const refCTe = getTextContent(nfRef, 'refCTe');
+      
+      if (refNFe) {
+        chaveReferenciada = refNFe;
+        nfeReferenciada = extrairNumeroDaChave(refNFe);
+        break;
+      }
+      if (refCTe) {
+        chaveReferenciada = refCTe;
+        cteReferenciado = extrairNumeroDaChave(refCTe);
+        break;
+      }
+    }
+  }
+
   return {
     id: crypto.randomUUID(),
     tipo: 'NF-e',
@@ -141,6 +212,9 @@ function parseNFe(doc: Element, fileName: string): NotaFiscal {
     ano,
     reducaoICMS,
     chaveAcesso,
+    nfeReferenciada,
+    cteReferenciado,
+    chaveReferenciada,
   };
 }
 
@@ -180,6 +254,22 @@ function parseCTe(doc: Element, fileName: string): NotaFiscal {
   const dataStr = getTextContent(ide, 'dhEmi') || getTextContent(ide, 'dEmi');
   const ano = dataStr ? dataStr.substring(0, 4) : '';
 
+  // Buscar NF-e referenciada no CT-e (infDoc > infNFe > chave)
+  let nfeReferenciada = '';
+  let chaveReferenciada = '';
+  
+  const infDoc = doc.getElementsByTagName('infDoc')[0];
+  if (infDoc) {
+    const infNFe = infDoc.getElementsByTagName('infNFe')[0];
+    if (infNFe) {
+      const chave = getTextContent(infNFe, 'chave');
+      if (chave) {
+        chaveReferenciada = chave;
+        nfeReferenciada = extrairNumeroDaChave(chave);
+      }
+    }
+  }
+
   return {
     id: crypto.randomUUID(),
     tipo: 'CT-e',
@@ -205,6 +295,9 @@ function parseCTe(doc: Element, fileName: string): NotaFiscal {
     ano,
     reducaoICMS,
     chaveAcesso,
+    nfeReferenciada,
+    cteReferenciado: '',
+    chaveReferenciada,
   };
 }
 

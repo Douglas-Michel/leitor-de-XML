@@ -1,112 +1,91 @@
-# Fiscal Flow
+# Conversor XML ✅
 
-**Aplicação web para extrair, visualizar e exportar dados de notas fiscais eletrônicas (NF-e) e conhecimentos de transporte (CT-e) a partir de arquivos XML.**
+**Projeto**: Aplicação React + Vite para fazer upload de arquivos XML, parsear os dados e exportar para Excel (.xlsx).
 
----
+## 🔧 Principais funcionalidades
 
-## ✨ Recursos
+- Upload de arquivos XML via `FileUploadZone` 📁
+- Parse e extração de dados usando `src/lib/xmlParser.ts` 🔍
+- Visualização em tabela com `DataTable.tsx` 📊
+- Exportação para Excel via `src/lib/excelExport.ts` (usa `xlsx`) 📤
+- Resumo e estatísticas com `SummaryCards.tsx` 🧾
 
-- Leitura e parse de arquivos `.xml` (NF-e e CT-e)
-- Extração de informações fiscais (valores, alíquotas, ICMS, PIS, COFINS, IPI, DIFAL, chave de acesso, etc.)
-- Visualização em tabela com busca e filtros
-- Resumo com cards de valores agregados
-- Exportação para Excel (.xlsx) com planilha de dados e planilha de resumo
-- Upload por arrastar/soltar ou seleção de arquivos
+## 🧩 Stack e dependências
 
----
+- React + Vite + TypeScript
+- Tailwind CSS
+- xlsx (para geração de Excel)
+- Diversos componentes do Radix UI e bibliotecas utilitárias
 
-## 🚀 Começando
+## 🚀 Instalação & execução
 
-### Pré-requisitos
-
-- Node.js (recomendo v18+)
-- Gerenciador de pacotes: npm / pnpm / yarn / bun
-
-### Instalação
+1. Instalar dependências:
 
 ```bash
-# com npm
 npm install
-
-# com pnpm
-pnpm install
-
-# com bun
-bun install
+# ou
+# pnpm install
+# yarn
 ```
 
-### Executando em desenvolvimento
+2. Executar em modo de desenvolvimento:
 
 ```bash
-# iniciar dev server
 npm run dev
-# ou
-pnpm dev
-# ou
-bun run dev
 ```
 
-Acesse http://localhost:5173 (ou a porta mostrada no terminal).
-
-### Build e preview
+3. Build para produção:
 
 ```bash
-# build de produção
 npm run build
+```
 
-# preview do build
+4. Visualizar build (preview):
+
+```bash
 npm run preview
 ```
 
-### Lint
+5. Lint:
 
 ```bash
 npm run lint
 ```
 
----
+> Observação: os scripts acima estão definidos em `package.json` (`dev`, `build`, `build:dev`, `preview`, `lint`).
 
-## 📂 Estrutura principal
+## 🗂 Estrutura relevante do projeto
 
-- `src/pages/Index.tsx` – página principal com upload, lista e exportação
-- `src/components/FileUploadZone.tsx` – zona de drag & drop e processamento de arquivos
-- `src/components/DataTable.tsx` – exibição de dados extraídos
-- `src/lib/xmlParser.ts` – lógica de parsing e normalização dos dados fiscais
-- `src/lib/excelExport.ts` – exportação para Excel (xlsx)
+- `src/`
+  - `components/`
+    - `FileUploadZone.tsx` — área de upload do XML
+    - `DataTable.tsx` — exibição tabular dos dados
+    - `ExportButton.tsx` — botão para exportar XLSX
+    - `SummaryCards.tsx` — cards de resumo
+  - `lib/`
+    - `xmlParser.ts` — funções para parsear XML
+    - `excelExport.ts` — funções para gerar planilhas
+  - `pages/` — rotas / páginas
 
----
+## 📝 Como usar
 
-## 🧩 Como usar
+1. Abra a aplicação em `localhost` com `npm run dev`.
+2. Arraste ou selecione o arquivo XML no componente de upload.
+3. Aguarde o parsing — os dados aparecerão na tabela e nos cards.
+4. Clique em **Exportar** para baixar um arquivo `.xlsx` com os dados.
 
-1. Abra a aplicação no navegador.
-2. Arraste e solte arquivos `.xml` (ou clique para selecionar).
-3. Aguarde o processamento — arquivos inválidos/maus formatados serão ignorados.
-4. Use a busca para filtrar por número, fornecedor, tipo ou data.
-5. Clique em **Exportar** para gerar um arquivo `.xlsx` com os dados e um resumo.
-6. Use **Limpar** para remover resultados carregados.
+## 🤝 Contribuição
 
-> Observação: o parser tenta extrair campos padrões de NF-e e CT-e. Se um XML estiver em esquema não esperado, os dados podem não ser extraídos corretamente.
+Issues e PRs são bem-vindos. Para mudanças grandes, abra uma issue antes para discutir a implementação.
 
----
+## ⚖️ Licença
 
-## 🛠️ Contribuindo
+Nenhuma licença especificada no repositório. Adicione um `LICENSE` se quiser tornar o projeto reutilizável por terceiros.
 
-1. Abra uma issue descrevendo o que deseja melhorar ou corrigir.
-2. Faça um fork, crie uma branch com sua feature/bugfix e abra um PR.
-3. Siga as regras de lint (`npm run lint`) e mantenha o código em TypeScript.
+## 💬 Contato
 
----
-
-## 📝 Licença
-
-Nenhuma licença está definida no repositório. Se quiser permitir uso aberto, adicione um arquivo `LICENSE` (por exemplo, MIT).
+Abra uma issue para reportar bugs, solicitar recursos ou tirar dúvidas.
 
 ---
 
-## Contato
-
-Se precisar de ajuda, abra uma issue no repositório.
-
----
-
-Feito com ❤️ — se quiser, posso ajustar o README (adicionar badges, exemplos de screenshots ou instruções de deploy).
+*README gerado automaticamente — revise e personalize conforme necessário.*
