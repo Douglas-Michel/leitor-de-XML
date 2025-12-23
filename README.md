@@ -23,9 +23,7 @@
 
 ```bash
 npm install
-# ou
-# pnpm install
-# yarn
+
 ```
 
 2. Executar em modo de desenvolvimento:
